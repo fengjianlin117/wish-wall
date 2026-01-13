@@ -1,44 +1,40 @@
 #!/bin/bash
-# Backend startup script for wish-wall
-# Generated on 2026-01-13 13:36:30 UTC
+
+# Wish Wall Backend Startup Script
 
 set -e
 
-echo "Starting wish-wall backend..."
+echo "Starting Wish Wall Backend..."
 
-# Wait for database to be ready
-echo "Waiting for PostgreSQL to be ready..."
-while ! nc -z postgres 5432; do
-  sleep 1
-done
-echo "PostgreSQL is ready!"
+# Check if Python is installed
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is not installed"
+    exit 1
+fi
 
-# Run migrations
-echo "Running database migrations..."
-python manage.py migrate
+echo "Python version: $(python3 --version)"
 
-# Collect static files
-echo "Collecting static files..."
-python manage.py collectstatic --noinput
+# Check if virtual environment exists, if not create it
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+fi
 
-# Create superuser if it doesn't exist
-echo "Setting up superuser..."
-python manage.py shell << END
-from django.contrib.auth import get_user_model
-User = get_user_model()
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('admin', 'admin@example.com', 'admin')
-    print('Superuser created')
-else:
-    print('Superuser already exists')
-END
+# Activate virtual environment
+echo "Activating virtual environment..."
+source venv/bin/activate
+
+# Install/upgrade dependencies
+echo "Installing dependencies..."
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Run database migrations (if using)
+echo "Running database setup..."
+if [ -f "migrate.py" ]; then
+    python migrate.py
+fi
 
 # Start the application
-echo "Starting Gunicorn server..."
-gunicorn config.wsgi:application \
-  --bind 0.0.0.0:8000 \
-  --workers 4 \
-  --worker-class sync \
-  --access-logfile - \
-  --error-logfile - \
-  --log-level info
+echo "Starting application server..."
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload

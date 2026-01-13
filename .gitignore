@@ -1,5 +1,27 @@
-# Python
-__pycache__/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Frontend build
+.DS_Store
+thumbsdb.db
+.env
+.env.local
+.env.*.local
+
+# Backend Python
+__pycache__
 *.py[cod]
 *$py.class
 *.so
@@ -22,26 +44,12 @@ share/python-wheels/
 .installed.cfg
 *.egg
 PIPFILE.lock
-.venv
+
+# Virtual Environment
+venv/
 ENV/
 env/
-venv/
-env.bak/
-venv.bak/
-.env
-.env.local
-.env.*.local
-
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+.venv
 
 # IDE
 .vscode/
@@ -49,36 +57,50 @@ pnpm-lock.yaml
 *.swp
 *.swo
 *~
-.DS_Store
+.project
+.pydevproject
+.settings/
 *.sublime-project
 *.sublime-workspace
-
-# Build
-dist/
-build/
-.next/
-out/
-.nuxt/
-.cache/
-.vuepress/dist/
-.serverless/
-.fusebox/
-.dynamodb/
-.tern-port
-
-# Vite
-.env.local
-.env.*.local
-
-# Docker
-.dockerignore
 
 # OS
 .DS_Store
 Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
 
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.hypothesis/
+
+# Docker
+.docker
+docker-compose.override.yml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Certificates
+*.pem
+*.key
+*.crt
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Environment files
+.env
+.env.local
+.env.*.local
+config/local.py
