@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wish Wall</title>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Wish Wall</h1>
+            <p class="subtitle">Share your wishes with the world</p>
+        </header>
+        
+        <main>
+            <section class="wish-input-section">
+                <form id="wishForm">
+                    <textarea id="wishText" placeholder="Write your wish here..." required></textarea>
+                    <button type="submit" class="submit-btn">Post Wish</button>
+                </form>
+            </section>
+            
+            <section class="wishes-display">
+                <div id="wishesList" class="wishes-list">
+                    <!-- Wishes will be displayed here -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2026 Wish Wall. All wishes welcome.</p>
+        </footer>
+    </div>
+    
+    <script src="src/app.js"></script>
+</body>
+</html>
