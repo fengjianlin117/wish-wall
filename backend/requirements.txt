@@ -1,0 +1,35 @@
+# Flask & Web Framework
+Flask==2.3.0
+Flask-CORS==4.0.0
+Flask-SQLAlchemy==3.0.0
+Flask-Migrate==4.0.0
+
+# Database
+SQLAlchemy==2.0.0
+psycopg2-binary==2.9.0
+
+# Data Validation
+Marshmallow==3.19.0
+Marshmallow-SQLAlchemy==0.29.0
+
+# Security
+PyJWT==2.8.0
+Werkzeug==2.3.0
+bcrypt==4.0.0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Redis
+redis==4.5.0
+
+# Utilities
+requests==2.31.0
+python-dateutil==2.8.0
+
+# Development
+pytest==7.3.0
+pytest-cov==4.1.0
+black==23.3.0
+flake8==6.0.0
+isort==5.12.0
