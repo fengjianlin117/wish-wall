@@ -2,22 +2,25 @@ version: '3.8'
 
 services:
   # PostgreSQL Database
-  db:
+  postgres:
     image: postgres:15-alpine
-    container_name: wish-wall-db
+    container_name: wish-wall-postgres
     environment:
-      POSTGRES_DB: wish_wall
-      POSTGRES_USER: wish_wall_user
-      POSTGRES_PASSWORD: wish_wall_password
+      POSTGRES_DB: wish_wall_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U wish_wall_user"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - wish-wall-network
 
   # Redis Cache
   redis:
@@ -32,47 +35,62 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - wish-wall-network
 
-  # Backend API
+  # Django Backend
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: wish-wall-backend
+    command: bash /app/start.sh
     environment:
-      FLASK_ENV: development
-      FLASK_DEBUG: 'True'
-      DATABASE_URL: postgresql://wish_wall_user:wish_wall_password@db:5432/wish_wall
-      REDIS_URL: redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    env_file:
+      - backend/.env
+    volumes:
+      - ./backend:/app
+      - backend_static:/app/staticfiles
+      - backend_media:/app/media
     ports:
-      - "5000:5000"
+      - "8000:8000"
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - ./backend:/app/backend
+    networks:
+      - wish-wall-network
+    restart: unless-stopped
 
-  # Frontend (Development)
+  # Nginx Frontend
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: wish-wall-frontend
-    ports:
-      - "5173:5173"
     volumes:
-      - ./frontend:/app/frontend
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
     depends_on:
       - backend
-    environment:
-      VITE_API_URL: http://localhost:5000
+    networks:
+      - wish-wall-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+    driver: local
   redis_data:
+    driver: local
+  backend_static:
+    driver: local
+  backend_media:
+    driver: local
 
 networks:
-  default:
-    name: wish-wall-network
+  wish-wall-network:
+    driver: bridge
